@@ -92,46 +92,57 @@
     </div>
 </div>
 
-<!-- Submit Section BELOW Images -->
 <div id="submitSection">
     <button id="submitBtn" onclick="openForm()">Submit Your Work</button>
 </div>
 
 <script>
 
+const TOTAL_TIME = 1800; // 30 minutes
 let countdown;
-let timeLeft = 1800; // 30 minutes
 let secretBuffer = "";
 
 function startChallenge() {
 
-    clearInterval(countdown);
-    timeLeft = 1800;
+    if (!localStorage.getItem("startTime")) {
+        localStorage.setItem("startTime", Date.now());
+    }
 
     document.getElementById("submitSection").style.display = "block";
 
+    runTimer();
+}
+
+function runTimer() {
+
+    clearInterval(countdown);
+
     countdown = setInterval(function () {
 
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
+        const startTime = localStorage.getItem("startTime");
+        if (!startTime) return;
+
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const remaining = TOTAL_TIME - elapsed;
+
+        if (remaining <= 0) {
+            clearInterval(countdown);
+            document.getElementById("timer").innerHTML = "Time's Up!";
+            return;
+        }
+
+        let minutes = Math.floor(remaining / 60);
+        let seconds = remaining % 60;
 
         if (seconds < 10) seconds = "0" + seconds;
 
         document.getElementById("timer").innerHTML =
             "Time Left: " + minutes + ":" + seconds;
 
-        timeLeft--;
-
-        if (timeLeft < 0) {
-            clearInterval(countdown);
-            document.getElementById("timer").innerHTML = "Time's Up!";
-        }
-
     }, 1000);
 }
 
 function openForm() {
-
     window.open(
         "https://docs.google.com/forms/d/e/1FAIpQLSc8oe7eHAKjE-FGOsaqUxDykT9Fpbx_JUfDyksmDugEAKV6XA/viewform?usp=header",
         "_blank"
@@ -139,7 +150,14 @@ function openForm() {
 }
 
 
-// 🔒 Hidden Restart Keyword → Type: resetcraft
+// Resume timer if page refreshed
+if (localStorage.getItem("startTime")) {
+    document.getElementById("submitSection").style.display = "block";
+    runTimer();
+}
+
+
+// Hidden restart keyword → type: resetcraft
 document.addEventListener("keydown", function(event) {
 
     secretBuffer += event.key.toLowerCase();
@@ -151,13 +169,12 @@ document.addEventListener("keydown", function(event) {
     if (secretBuffer.includes("resetcraft")) {
 
         clearInterval(countdown);
-        timeLeft = 1800;
+        localStorage.removeItem("startTime");
 
         document.getElementById("timer").innerHTML = "";
         document.getElementById("submitSection").style.display = "none";
 
         secretBuffer = "";
-
         alert("System Reset Successfully");
     }
 
@@ -166,5 +183,4 @@ document.addEventListener("keydown", function(event) {
 </script>
 
 </body>
-
 </html>
