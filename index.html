@@ -1,177 +1,192 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PROMPTCRAFT</title>
-<meta charset="UTF-8">
+    <title>PROMPTCRAFT</title>
+    <meta charset="UTF-8">
 
-<style>
-body {
-    margin:0;
-    font-family:Arial;
-    background:#0f172a;
-    color:white;
-    text-align:center;
-}
-h1 {
-    padding:20px;
-    font-size:42px;
-    letter-spacing:4px;
-}
-button {
-    padding:12px 25px;
-    font-size:18px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    background:#2563eb;
-    color:white;
-    margin:15px;
-}
-#timer {
-    font-size:26px;
-    margin-top:15px;
-}
-.image-container {
-    display:flex;
-    justify-content:center;
-    gap:60px;
-    margin-top:40px;
-    flex-wrap:wrap;
-}
-.image-box img {
-    width:350px;
-    border-radius:12px;
-    border:4px solid white;
-}
-.label {
-    margin-top:10px;
-    font-weight:bold;
-    letter-spacing:2px;
-}
-#submitSection {
-    margin-top:40px;
-    display:none;
-}
-#submitBtn {
-    background:#16a34a;
-}
-</style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #111;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            user-select: none;
+        }
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        #timer {
+            font-size: 28px;
+            color: #00ffcc;
+            margin-bottom: 20px;
+        }
+
+        .image-container {
+            margin: 20px;
+        }
+
+        img {
+            width: 45%;
+            max-width: 500px;
+            margin: 10px;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        textarea {
+            width: 80%;
+            height: 120px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-btn {
+            background-color: #00ffcc;
+        }
+
+        #restartBox {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            opacity: 0;
+        }
+    </style>
 </head>
 
 <body>
 
 <h1>PROMPTCRAFT</h1>
 
-<button onclick="startChallenge()">Start Challenge</button>
-<div id="timer"></div>
+<div id="timer">30:00</div>
 
 <div class="image-container">
-    <div class="image-box">
-        <img src="image1.png">
-        <div class="label">IMAGE1</div>
-    </div>
-    <div class="image-box">
-        <img src="image2.png">
-        <div class="label">IMAGE2</div>
-    </div>
+    <h3>IMAGE1</h3>
+    <img src="image1.png">
 </div>
 
-<div id="submitSection">
-    <button id="submitBtn" onclick="openForm()">Submit Your Work</button>
+<div class="image-container">
+    <h3>IMAGE2</h3>
+    <img src="image2.png">
 </div>
+
+<h2>Submit Your Prompt Below</h2>
+
+<textarea placeholder="Write your prompt here..."></textarea>
+
+<br>
+
+<button class="form-btn"
+onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc8oe7eHAKjE-FGOsaqUxDykT9Fpbx_JUfDyksmDugEAKV6XA/viewform?usp=header','_blank')">
+Open Google Submission Form
+</button>
+
+<input type="text" id="restartBox" placeholder="hidden">
 
 <script>
+/* ================= TIMER (NO RESET ON REFRESH) ================= */
 
-const TOTAL_TIME = 1800; // 30 min
-let countdown;
-let secretBuffer = "";
+let totalTime = 30 * 60; // 30 minutes
 
-// Disable right click
-document.addEventListener("contextmenu", e => e.preventDefault());
+if (localStorage.getItem("endTime")) {
+    totalTime = Math.floor((localStorage.getItem("endTime") - Date.now()) / 1000);
+} else {
+    let endTime = Date.now() + totalTime * 1000;
+    localStorage.setItem("endTime", endTime);
+}
 
-// Disable inspect shortcuts
+function updateTimer() {
+
+    let endTime = localStorage.getItem("endTime");
+    let remaining = Math.floor((endTime - Date.now()) / 1000);
+
+    if (remaining <= 0) {
+        document.getElementById("timer").innerHTML = "TIME UP";
+        localStorage.removeItem("endTime");
+        return;
+    }
+
+    let minutes = Math.floor(remaining / 60);
+    let seconds = remaining % 60;
+
+    document.getElementById("timer").innerHTML =
+        (minutes < 10 ? "0" : "") + minutes + ":" +
+        (seconds < 10 ? "0" : "") + seconds;
+}
+
+setInterval(updateTimer, 1000);
+updateTimer();
+
+/* ================= HIDDEN RESTART KEYWORD ================= */
+
 document.addEventListener("keydown", function(e) {
-
-    // Block F12
-    if (e.key === "F12") e.preventDefault();
-
-    // Block Ctrl+Shift+I / Ctrl+Shift+J
-    if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J"))
-        e.preventDefault();
-
-    // Block Ctrl+U
-    if (e.ctrlKey && e.key === "u")
-        e.preventDefault();
-
-    // Block Ctrl+R
-    if (e.ctrlKey && e.key === "r")
-        e.preventDefault();
-
-    // Hidden reset keyword
-    secretBuffer += e.key.toLowerCase();
-    if (secretBuffer.length > 20)
-        secretBuffer = secretBuffer.slice(-20);
-
-    if (secretBuffer.includes("resetcraft")) {
-        clearInterval(countdown);
-        localStorage.removeItem("startTime");
-        document.getElementById("timer").innerHTML = "";
-        document.getElementById("submitSection").style.display = "none";
-        secretBuffer = "";
-        alert("System Reset Successfully");
+    if (e.key === "Enter") {
+        let val = document.getElementById("restartBox").value;
+        if (val === "adminrestart") {
+            localStorage.removeItem("endTime");
+            location.reload();
+        }
     }
 });
 
-function startChallenge() {
+/* ================= DISABLE RIGHT CLICK ================= */
 
-    if (!localStorage.getItem("startTime")) {
-        localStorage.setItem("startTime", Date.now());
+document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+});
+
+/* ================= DISABLE TEXT SELECT & DRAG ================= */
+
+document.addEventListener("selectstart", function (e) {
+    e.preventDefault();
+});
+
+document.addEventListener("dragstart", function (e) {
+    e.preventDefault();
+});
+
+/* ================= DISABLE DEVTOOLS & SHORTCUTS ================= */
+
+document.addEventListener("keydown", function (e) {
+
+    if (e.key === "F12") e.preventDefault();
+
+    if (e.ctrlKey && e.shiftKey && e.key === "I") e.preventDefault();
+    if (e.ctrlKey && e.shiftKey && e.key === "J") e.preventDefault();
+    if (e.ctrlKey && e.shiftKey && e.key === "C") e.preventDefault();
+
+    if (e.ctrlKey && e.key === "u") e.preventDefault();
+    if (e.ctrlKey && e.key === "s") e.preventDefault();
+    if (e.ctrlKey && e.key === "p") e.preventDefault();
+    if (e.ctrlKey && e.key === "r") e.preventDefault();
+
+    if (e.key === "F5") e.preventDefault();
+});
+
+/* ================= DETECT DEVTOOLS OPEN ================= */
+
+let devtools = {open: false};
+setInterval(function() {
+    if (window.outerWidth - window.innerWidth > 160) {
+        location.reload();
     }
-
-    document.getElementById("submitSection").style.display = "block";
-    runTimer();
-}
-
-function runTimer() {
-
-    clearInterval(countdown);
-
-    countdown = setInterval(function() {
-
-        const startTime = localStorage.getItem("startTime");
-        if (!startTime) return;
-
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        const remaining = TOTAL_TIME - elapsed;
-
-        if (remaining <= 0) {
-            clearInterval(countdown);
-            document.getElementById("timer").innerHTML = "Time's Up!";
-            return;
-        }
-
-        let minutes = Math.floor(remaining / 60);
-        let seconds = remaining % 60;
-        if (seconds < 10) seconds = "0" + seconds;
-
-        document.getElementById("timer").innerHTML =
-            "Time Left: " + minutes + ":" + seconds;
-
-    }, 1000);
-}
-
-function openForm() {
-    window.open(
-        "https://docs.google.com/forms/d/e/1FAIpQLSc8oe7eHAKjE-FGOsaqUxDykT9Fpbx_JUfDyksmDugEAKV6XA/viewform?usp=header",
-        "_blank"
-    );
-}
-
-// Resume if refreshed
-if (localStorage.getItem("startTime")) {
-    document.getElementById("submitSection").style.display = "block";
-    runTimer();
-}
+}, 1000);
 
 </script>
 
