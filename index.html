@@ -17,17 +17,26 @@
 
         h1 {
             font-size: 42px;
-            margin-bottom: 10px;
         }
 
         #timer {
-            font-size: 28px;
+            font-size: 32px;
             color: #00ffcc;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
 
-        .image-container {
-            margin: 25px 0;
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            margin: 15px;
+            background-color: #00ffcc;
+        }
+
+        .hidden {
+            display: none;
         }
 
         img {
@@ -36,23 +45,6 @@
             margin: 10px;
             border-radius: 10px;
             pointer-events: none;
-        }
-
-        button {
-            margin-top: 25px;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            background-color: #00ffcc;
-        }
-
-        #restartBox {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            opacity: 0;
         }
     </style>
 </head>
@@ -63,61 +55,75 @@
 
 <div id="timer">30:00</div>
 
-<div class="image-container">
+<button id="startBtn" onclick="startEvent()">START</button>
+
+<div id="eventContent" class="hidden">
+
     <h3>IMAGE1</h3>
     <img src="image1.png">
-</div>
 
-<div class="image-container">
     <h3>IMAGE2</h3>
     <img src="image2.png">
+
+    <br>
+
+    <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc8oe7eHAKjE-FGOsaqUxDykT9Fpbx_JUfDyksmDugEAKV6XA/viewform?usp=header','_blank')">
+        Open Google Submission Form
+    </button>
+
 </div>
 
-<br>
-
-<button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc8oe7eHAKjE-FGOsaqUxDykT9Fpbx_JUfDyksmDugEAKV6XA/viewform?usp=header','_blank')">
-Open Google Submission Form
-</button>
-
-
 <script>
-/* ================= TIMER (NO RESET ON REFRESH) ================= */
 
-let totalTime = 30 * 60;
-
-if (localStorage.getItem("endTime")) {
-    totalTime = Math.floor((localStorage.getItem("endTime") - Date.now()) / 1000);
-} else {
-    let endTime = Date.now() + totalTime * 1000;
-    localStorage.setItem("endTime", endTime);
-}
-
-function updateTimer() {
-
-    let endTime = localStorage.getItem("endTime");
-    let remaining = Math.floor((endTime - Date.now()) / 1000);
-
-    if (remaining <= 0) {
-        document.getElementById("timer").innerHTML = "TIME UP";
-        localStorage.removeItem("endTime");
-        return;
-    }
-
-    let minutes = Math.floor(remaining / 60);
-    let seconds = remaining % 60;
-
-    document.getElementById("timer").innerHTML =
-        (minutes < 10 ? "0" : "") + minutes + ":" +
-        (seconds < 10 ? "0" : "") + seconds;
-}
-
-setInterval(updateTimer, 1000);
-updateTimer();
-
-/* ================= SECRET ADMIN RESTART ================= */
-
+let duration = 30 * 60; 
+let timerInterval;
 let secretCode = "";
 let correctCode = "adminrestart";
+
+/* ================= START EVENT ================= */
+
+function startEvent() {
+
+    document.getElementById("startBtn").classList.add("hidden");
+    document.getElementById("eventContent").classList.remove("hidden");
+
+    let endTime = Date.now() + duration * 1000;
+    localStorage.setItem("endTime", endTime);
+
+    runTimer();
+}
+
+/* ================= TIMER ================= */
+
+function runTimer() {
+
+    clearInterval(timerInterval);
+
+    timerInterval = setInterval(function() {
+
+        let endTime = localStorage.getItem("endTime");
+        if (!endTime) return;
+
+        let remaining = Math.floor((endTime - Date.now()) / 1000);
+
+        if (remaining <= 0) {
+            document.getElementById("timer").innerHTML = "TIME UP";
+            clearInterval(timerInterval);
+            localStorage.removeItem("endTime");
+            return;
+        }
+
+        let minutes = Math.floor(remaining / 60);
+        let seconds = remaining % 60;
+
+        document.getElementById("timer").innerHTML =
+            (minutes < 10 ? "0" : "") + minutes + ":" +
+            (seconds < 10 ? "0" : "") + seconds;
+
+    }, 1000);
+}
+
+/* ================= SECRET FULL RESET ================= */
 
 document.addEventListener("keydown", function(e) {
 
@@ -128,56 +134,34 @@ document.addEventListener("keydown", function(e) {
     }
 
     if (secretCode === correctCode) {
+
+        clearInterval(timerInterval);
         localStorage.removeItem("endTime");
-        alert("Admin Restart Activated");
-        location.reload();
+
+        document.getElementById("timer").innerHTML = "30:00";
+
+        document.getElementById("eventContent").classList.add("hidden");
+        document.getElementById("startBtn").classList.remove("hidden");
+
+        alert("Event Fully Reset");
     }
 });
-/* ================= DISABLE RIGHT CLICK ================= */
 
-document.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-});
+/* ================= SECURITY ================= */
 
-/* ================= DISABLE TEXT SELECT & DRAG ================= */
-
-document.addEventListener("selectstart", function (e) {
-    e.preventDefault();
-});
-
-document.addEventListener("dragstart", function (e) {
-    e.preventDefault();
-});
-
-/* ================= DISABLE DEVTOOLS & SHORTCUTS ================= */
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("selectstart", e => e.preventDefault());
+document.addEventListener("dragstart", e => e.preventDefault());
 
 document.addEventListener("keydown", function (e) {
 
     if (e.key === "F12") e.preventDefault();
-
-    if (e.ctrlKey && e.shiftKey && e.key === "I") e.preventDefault();
-    if (e.ctrlKey && e.shiftKey && e.key === "J") e.preventDefault();
-    if (e.ctrlKey && e.shiftKey && e.key === "C") e.preventDefault();
-
-    if (e.ctrlKey && e.key === "u") e.preventDefault();
-    if (e.ctrlKey && e.key === "s") e.preventDefault();
-    if (e.ctrlKey && e.key === "p") e.preventDefault();
-    if (e.ctrlKey && e.key === "r") e.preventDefault();
-
+    if (e.ctrlKey && e.shiftKey && ["I","J","C"].includes(e.key)) e.preventDefault();
+    if (e.ctrlKey && ["u","s","p","r"].includes(e.key)) e.preventDefault();
     if (e.key === "F5") e.preventDefault();
 });
-
-/* ================= DEVTOOLS DETECT ================= */
-
-setInterval(function() {
-    if (window.outerWidth - window.innerWidth > 160) {
-        location.reload();
-    }
-}, 1000);
 
 </script>
 
 </body>
 </html>
-
-
