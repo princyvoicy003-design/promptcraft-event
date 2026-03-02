@@ -1,91 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PROMPTCRAFT</title>
-    <meta charset="UTF-8">
+<title>PROMPTCRAFT</title>
+<meta charset="UTF-8">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-        }
-
-        h1 {
-            padding: 20px;
-            font-size: 42px;
-            letter-spacing: 4px;
-        }
-
-        .controls {
-            margin: 20px;
-        }
-
-        button {
-            padding: 12px 25px;
-            font-size: 18px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background: #2563eb;
-            color: white;
-            margin: 15px;
-        }
-
-        #timer {
-            font-size: 26px;
-            margin-top: 15px;
-        }
-
-        .image-container {
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-
-        .image-box img {
-            width: 350px;
-            border-radius: 12px;
-            border: 4px solid white;
-        }
-
-        .label {
-            margin-top: 10px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            font-size: 18px;
-        }
-
-        #submitSection {
-            margin-top: 40px;
-            display: none;
-        }
-
-        #submitBtn {
-            background: #16a34a;
-        }
-    </style>
+<style>
+body {
+    margin:0;
+    font-family:Arial;
+    background:#0f172a;
+    color:white;
+    text-align:center;
+}
+h1 {
+    padding:20px;
+    font-size:42px;
+    letter-spacing:4px;
+}
+button {
+    padding:12px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+    margin:15px;
+}
+#timer {
+    font-size:26px;
+    margin-top:15px;
+}
+.image-container {
+    display:flex;
+    justify-content:center;
+    gap:60px;
+    margin-top:40px;
+    flex-wrap:wrap;
+}
+.image-box img {
+    width:350px;
+    border-radius:12px;
+    border:4px solid white;
+}
+.label {
+    margin-top:10px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+#submitSection {
+    margin-top:40px;
+    display:none;
+}
+#submitBtn {
+    background:#16a34a;
+}
+</style>
 </head>
 
 <body>
 
 <h1>PROMPTCRAFT</h1>
 
-<div class="controls">
-    <button onclick="startChallenge()">Start Challenge</button>
-    <div id="timer"></div>
-</div>
+<button onclick="startChallenge()">Start Challenge</button>
+<div id="timer"></div>
 
 <div class="image-container">
     <div class="image-box">
         <img src="image1.png">
         <div class="label">IMAGE1</div>
     </div>
-
     <div class="image-box">
         <img src="image2.png">
         <div class="label">IMAGE2</div>
@@ -98,9 +82,45 @@
 
 <script>
 
-const TOTAL_TIME = 1800; // 30 minutes
+const TOTAL_TIME = 1800; // 30 min
 let countdown;
 let secretBuffer = "";
+
+// Disable right click
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// Disable inspect shortcuts
+document.addEventListener("keydown", function(e) {
+
+    // Block F12
+    if (e.key === "F12") e.preventDefault();
+
+    // Block Ctrl+Shift+I / Ctrl+Shift+J
+    if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J"))
+        e.preventDefault();
+
+    // Block Ctrl+U
+    if (e.ctrlKey && e.key === "u")
+        e.preventDefault();
+
+    // Block Ctrl+R
+    if (e.ctrlKey && e.key === "r")
+        e.preventDefault();
+
+    // Hidden reset keyword
+    secretBuffer += e.key.toLowerCase();
+    if (secretBuffer.length > 20)
+        secretBuffer = secretBuffer.slice(-20);
+
+    if (secretBuffer.includes("resetcraft")) {
+        clearInterval(countdown);
+        localStorage.removeItem("startTime");
+        document.getElementById("timer").innerHTML = "";
+        document.getElementById("submitSection").style.display = "none";
+        secretBuffer = "";
+        alert("System Reset Successfully");
+    }
+});
 
 function startChallenge() {
 
@@ -109,7 +129,6 @@ function startChallenge() {
     }
 
     document.getElementById("submitSection").style.display = "block";
-
     runTimer();
 }
 
@@ -117,7 +136,7 @@ function runTimer() {
 
     clearInterval(countdown);
 
-    countdown = setInterval(function () {
+    countdown = setInterval(function() {
 
         const startTime = localStorage.getItem("startTime");
         if (!startTime) return;
@@ -133,7 +152,6 @@ function runTimer() {
 
         let minutes = Math.floor(remaining / 60);
         let seconds = remaining % 60;
-
         if (seconds < 10) seconds = "0" + seconds;
 
         document.getElementById("timer").innerHTML =
@@ -149,36 +167,11 @@ function openForm() {
     );
 }
 
-
-// Resume timer if page refreshed
+// Resume if refreshed
 if (localStorage.getItem("startTime")) {
     document.getElementById("submitSection").style.display = "block";
     runTimer();
 }
-
-
-// Hidden restart keyword → type: resetcraft
-document.addEventListener("keydown", function(event) {
-
-    secretBuffer += event.key.toLowerCase();
-
-    if (secretBuffer.length > 20) {
-        secretBuffer = secretBuffer.slice(-20);
-    }
-
-    if (secretBuffer.includes("resetcraft")) {
-
-        clearInterval(countdown);
-        localStorage.removeItem("startTime");
-
-        document.getElementById("timer").innerHTML = "";
-        document.getElementById("submitSection").style.display = "none";
-
-        secretBuffer = "";
-        alert("System Reset Successfully");
-    }
-
-});
 
 </script>
 
