@@ -75,7 +75,7 @@
 
 <script>
 
-let duration = 30 * 60; 
+let duration = 30 * 60;
 let timerInterval;
 let secretCode = "";
 let correctCode = "adminrestart";
@@ -84,13 +84,20 @@ let correctCode = "adminrestart";
 
 function startEvent() {
 
+    let endTime = Date.now() + duration * 1000;
+
+    localStorage.setItem("endTime", endTime);
+    localStorage.setItem("eventStarted", "true");
+
+    showEvent();
+    runTimer();
+}
+
+/* ================= SHOW EVENT ================= */
+
+function showEvent() {
     document.getElementById("startBtn").classList.add("hidden");
     document.getElementById("eventContent").classList.remove("hidden");
-
-    let endTime = Date.now() + duration * 1000;
-    localStorage.setItem("endTime", endTime);
-
-    runTimer();
 }
 
 /* ================= TIMER ================= */
@@ -110,6 +117,7 @@ function runTimer() {
             document.getElementById("timer").innerHTML = "TIME UP";
             clearInterval(timerInterval);
             localStorage.removeItem("endTime");
+            localStorage.removeItem("eventStarted");
             return;
         }
 
@@ -122,6 +130,17 @@ function runTimer() {
 
     }, 1000);
 }
+
+/* ================= RESUME AFTER REFRESH ================= */
+
+window.onload = function() {
+
+    if (localStorage.getItem("eventStarted") === "true") {
+
+        showEvent();
+        runTimer();
+    }
+};
 
 /* ================= SECRET FULL RESET ================= */
 
@@ -136,10 +155,11 @@ document.addEventListener("keydown", function(e) {
     if (secretCode === correctCode) {
 
         clearInterval(timerInterval);
+
         localStorage.removeItem("endTime");
+        localStorage.removeItem("eventStarted");
 
         document.getElementById("timer").innerHTML = "30:00";
-
         document.getElementById("eventContent").classList.add("hidden");
         document.getElementById("startBtn").classList.remove("hidden");
 
