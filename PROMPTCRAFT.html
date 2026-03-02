@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PROMPTCRAFT</title>
+    <meta charset="UTF-8">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            padding: 20px;
+            font-size: 42px;
+            letter-spacing: 4px;
+        }
+
+        .controls {
+            margin: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            margin: 15px;
+        }
+
+        #timer {
+            font-size: 26px;
+            margin-top: 15px;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .image-box img {
+            width: 350px;
+            border-radius: 12px;
+            border: 4px solid white;
+        }
+
+        .label {
+            margin-top: 10px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 18px;
+        }
+
+        #submitSection {
+            margin-top: 40px;
+            display: none;
+        }
+
+        #submitBtn {
+            background: #16a34a;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>PROMPTCRAFT</h1>
+
+<div class="controls">
+    <button onclick="startChallenge()">Start Challenge</button>
+    <div id="timer"></div>
+</div>
+
+<div class="image-container">
+    <div class="image-box">
+        <img src="image1.png">
+        <div class="label">IMAGE1</div>
+    </div>
+
+    <div class="image-box">
+        <img src="image2.png">
+        <div class="label">IMAGE2</div>
+    </div>
+</div>
+
+<!-- Submit Section BELOW Images -->
+<div id="submitSection">
+    <button id="submitBtn" onclick="openForm()">Submit Your Work</button>
+</div>
+
+<script>
+
+let countdown;
+let timeLeft = 1800; // 30 minutes
+let secretBuffer = "";
+
+function startChallenge() {
+
+    clearInterval(countdown);
+    timeLeft = 1800;
+
+    document.getElementById("submitSection").style.display = "block";
+
+    countdown = setInterval(function () {
+
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+
+        if (seconds < 10) seconds = "0" + seconds;
+
+        document.getElementById("timer").innerHTML =
+            "Time Left: " + minutes + ":" + seconds;
+
+        timeLeft--;
+
+        if (timeLeft < 0) {
+            clearInterval(countdown);
+            document.getElementById("timer").innerHTML = "Time's Up!";
+        }
+
+    }, 1000);
+}
+
+function openForm() {
+
+    window.open(
+        "https://docs.google.com/forms/d/e/1FAIpQLSc8oe7eHAKjE-FGOsaqUxDykT9Fpbx_JUfDyksmDugEAKV6XA/viewform?usp=header",
+        "_blank"
+    );
+}
+
+
+// 🔒 Hidden Restart Keyword → Type: resetcraft
+document.addEventListener("keydown", function(event) {
+
+    secretBuffer += event.key.toLowerCase();
+
+    if (secretBuffer.length > 20) {
+        secretBuffer = secretBuffer.slice(-20);
+    }
+
+    if (secretBuffer.includes("resetcraft")) {
+
+        clearInterval(countdown);
+        timeLeft = 1800;
+
+        document.getElementById("timer").innerHTML = "";
+        document.getElementById("submitSection").style.display = "none";
+
+        secretBuffer = "";
+
+        alert("System Reset Successfully");
+    }
+
+});
+
+</script>
+
+</body>
+</html>
