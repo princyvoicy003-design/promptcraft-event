@@ -115,18 +115,25 @@ function updateTimer() {
 setInterval(updateTimer, 1000);
 updateTimer();
 
-/* ================= HIDDEN RESTART ================= */
+/* ================= SECRET ADMIN RESTART ================= */
+
+let secretCode = "";
+let correctCode = "adminrestart";
 
 document.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-        let val = document.getElementById("restartBox").value;
-        if (val === "adminrestart") {
-            localStorage.removeItem("endTime");
-            location.reload();
-        }
+
+    secretCode += e.key.toLowerCase();
+
+    if (secretCode.length > correctCode.length) {
+        secretCode = secretCode.substring(secretCode.length - correctCode.length);
+    }
+
+    if (secretCode === correctCode) {
+        localStorage.removeItem("endTime");
+        alert("Admin Restart Activated");
+        location.reload();
     }
 });
-
 /* ================= DISABLE RIGHT CLICK ================= */
 
 document.addEventListener("contextmenu", function (e) {
@@ -173,3 +180,4 @@ setInterval(function() {
 
 </body>
 </html>
+
