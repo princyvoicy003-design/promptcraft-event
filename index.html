@@ -24,36 +24,22 @@
             color: #00ffcc;
             margin: 20px 0;
         }
-<div id="rulesBox" style="max-width:800px; margin:20px auto; text-align:left; background:#1a1a1a; padding:20px; border-radius:10px;">
+        
+         #rulesBox {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: left;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            line-height: 1.8;
+            font-size: 15px;
+        }
 
-<h2 style="text-align:center;">Important Guidelines</h2>
-
-<ul style="line-height:1.8; font-size:15px;">
-
-<li><strong>Event Duration:</strong> 30 Minutes.</li>
-
-<li>The original image is provided for viewing reference only.</li>
-
-<li>Downloading, copying, tracing, or directly editing the original image is strictly prohibited.</li>
-
-<li>Only AI-generated recreations are allowed (using tools like OpenAI tools, Midjourney, Gemini AI, or Stability AI tools).</li>
-
-<li>Participants must recreate the image as accurately as possible, matching composition, colors, lighting, and background details.</li>
-
-<li>Only one submission is allowed per participant.</li>
-
-<li>Accepted formats: JPG or PNG (Maximum 10MB).</li>
-
-<li>Multiple submissions will lead to disqualification.</li>
-
-<li>Any direct copy of the original image will result in immediate disqualification.</li>
-
-<li>Judging will be based on similarity, detail accuracy, lighting & color match, composition, and overall quality.</li>
-
-</ul>
-
-</div>
-
+        #rulesBox h2 {
+            text-align: center;
+        }
+        
         button {
             padding: 12px 25px;
             font-size: 16px;
@@ -83,6 +69,23 @@
 <h1>PROMPTCRAFT</h1>
 
 <div id="timer">30:00</div>
+
+<!-- RULES SECTION -->
+<div id="rulesBox">
+    <h2>Important Guidelines</h2>
+    <ul>
+        <li><strong>Event Duration:</strong> 30 Minutes.</li>
+        <li>The original image is provided for viewing reference only.</li>
+        <li>Downloading, copying, tracing, or directly editing the original image is strictly prohibited.</li>
+        <li>Only AI-generated recreations are allowed (using tools like OpenAI tools, Midjourney, Gemini AI, or Stability AI tools).</li>
+        <li>Participants must recreate the image as accurately as possible, matching composition, colors, lighting, and background details.</li>
+        <li>Only one submission is allowed per participant.</li>
+        <li>Accepted formats: JPG or PNG (Maximum 10MB).</li>
+        <li>Multiple submissions will lead to disqualification.</li>
+        <li>Any direct copy of the original image will result in immediate disqualification.</li>
+        <li>Judging will be based on similarity, detail accuracy, lighting & color match, composition, and overall quality.</li>
+    </ul>
+</div>
 
 <button id="startBtn" onclick="startEvent()">START</button>
 
@@ -214,4 +217,5 @@ document.addEventListener("keydown", function (e) {
 
 </body>
 </html>
+
 
