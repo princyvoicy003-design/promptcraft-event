@@ -16,7 +16,7 @@
         }
 
         h1 {
-            font-size: 40px;
+            font-size: 42px;
             margin-bottom: 10px;
         }
 
@@ -27,7 +27,7 @@
         }
 
         .image-container {
-            margin: 20px;
+            margin: 25px 0;
         }
 
         img {
@@ -38,26 +38,13 @@
             pointer-events: none;
         }
 
-        textarea {
-            width: 80%;
-            height: 120px;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
-            margin-top: 20px;
-        }
-
         button {
-            margin-top: 15px;
-            padding: 10px 20px;
+            margin-top: 25px;
+            padding: 12px 25px;
             font-size: 16px;
             border-radius: 6px;
             border: none;
             cursor: pointer;
-        }
-
-        .form-btn {
             background-color: #00ffcc;
         }
 
@@ -86,23 +73,18 @@
     <img src="image2.png">
 </div>
 
-<h2>Submit Your Prompt Below</h2>
-
-<textarea placeholder="Write your prompt here..."></textarea>
-
 <br>
 
-<button class="form-btn"
-onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc8oe7eHAKjE-FGOsaqUxDykT9Fpbx_JUfDyksmDugEAKV6XA/viewform?usp=header','_blank')">
+<button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc8oe7eHAKjE-FGOsaqUxDykT9Fpbx_JUfDyksmDugEAKV6XA/viewform?usp=header','_blank')">
 Open Google Submission Form
 </button>
 
-<input type="text" id="restartBox" placeholder="hidden">
+<input type="text" id="restartBox">
 
 <script>
 /* ================= TIMER (NO RESET ON REFRESH) ================= */
 
-let totalTime = 30 * 60; // 30 minutes
+let totalTime = 30 * 60;
 
 if (localStorage.getItem("endTime")) {
     totalTime = Math.floor((localStorage.getItem("endTime") - Date.now()) / 1000);
@@ -133,7 +115,7 @@ function updateTimer() {
 setInterval(updateTimer, 1000);
 updateTimer();
 
-/* ================= HIDDEN RESTART KEYWORD ================= */
+/* ================= HIDDEN RESTART ================= */
 
 document.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
@@ -179,9 +161,8 @@ document.addEventListener("keydown", function (e) {
     if (e.key === "F5") e.preventDefault();
 });
 
-/* ================= DETECT DEVTOOLS OPEN ================= */
+/* ================= DEVTOOLS DETECT ================= */
 
-let devtools = {open: false};
 setInterval(function() {
     if (window.outerWidth - window.innerWidth > 160) {
         location.reload();
