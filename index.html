@@ -211,12 +211,25 @@ document.addEventListener("keydown", function (e) {
     if (e.ctrlKey && e.shiftKey && ["I","J","C"].includes(e.key)) e.preventDefault();
     if (e.ctrlKey && ["u","s","p","r"].includes(e.key)) e.preventDefault();
     if (e.key === "F5") e.preventDefault();
-});
 
+    // 🚫 Block Print Screen
+    if (e.key === "PrintScreen") {
+        e.preventDefault();
+        alert("Screenshots are disabled!");
+    }
+
+    // 🚫 Block Ctrl + Shift + S
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        alert("Screenshots are disabled!");
+    }
+
+});
 </script>
 
 </body>
 </html>
+
 
 
 
