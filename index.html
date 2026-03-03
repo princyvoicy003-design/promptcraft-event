@@ -68,13 +68,13 @@
 
 <h1>PROMPTCRAFT</h1>
 
-<div id="timer">30:00</div>
+<div id="timer">20:00</div>
 
 <!-- RULES SECTION -->
 <div id="rulesBox">
     <h2>Important Guidelines</h2>
     <ul>
-        <li><strong>Event Duration:</strong> 30 Minutes.</li>
+        <li><strong>Event Duration:</strong> 20 Minutes.</li>
         <li>The original image is provided for viewing reference only.</li>
         <li>Downloading, copying, tracing, or directly editing the original image is strictly prohibited.</li>
         <li>Only AI-generated recreations are allowed (using tools like OpenAI tools, Midjourney, Gemini AI, or Stability AI tools).</li>
@@ -107,7 +107,7 @@
 
 <script>
 
-let duration = 30 * 60;
+let duration = 20 * 60;
 let timerInterval;
 let secretCode = "";
 let correctCode = "adminrestart";
@@ -191,7 +191,7 @@ document.addEventListener("keydown", function(e) {
         localStorage.removeItem("endTime");
         localStorage.removeItem("eventStarted");
 
-        document.getElementById("timer").innerHTML = "30:00";
+        document.getElementById("timer").innerHTML = "20:00";
         document.getElementById("eventContent").classList.add("hidden");
         document.getElementById("startBtn").classList.remove("hidden");
 
@@ -217,5 +217,6 @@ document.addEventListener("keydown", function (e) {
 
 </body>
 </html>
+
 
 
